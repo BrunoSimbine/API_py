@@ -19,16 +19,7 @@ def toJson(registos):
     return json.dumps(lista)
 mycursor = mydb.cursor()
 
-try:
-    mycursor.execute("CREATE TABLE produtos (id INTEGER PRIMARY KEY, nome VARCHAR(30), preco INTEGER(10), quantidade INTEGER(10))")
-except:
-    print("Tabela ja criada")
-
-
 app= Flask(__name__)
-
-def adicionar_loja_final(nome_d):
-    mycursor.execute("CREATE TABLE %s(id INTEGER PRIMARY KEY, nome VARCHAR(30), preco INTEGER(10), quantidade INTEGER(10))" % (nome_d))
 
 @app.route("/", methods=["POST"])
 def listar_lojas():
@@ -37,6 +28,9 @@ def listar_lojas():
     result = mycursor.fetchall()
     return toJson(result)
 
+
+
+# Criador de lojas
 @app.route("/adicionar/loja", methods=["POST"])
 def adicionar_loja():
     body = request.get_json()
@@ -62,6 +56,7 @@ def adicionar_loja():
         return {"status":"sucess", "loja_id":f[0]}
     except:
         return {"message":"Falha ao inserir a Loja"}
+
 
 
 @app.route("/atualizar", methods=["POST"])
