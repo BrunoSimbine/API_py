@@ -3,10 +3,10 @@ import mysql.connector
 import json
 
 mydb = mysql.connector.connect(
-    host="sql106.epizy.com",
-    user="epiz_25916034",
-    passwd="cCTJ7iz6fA7k",
-    database="epiz_25916034_loja"
+    host="sql7.freesqldatabase.com",
+    user="sql7353111",
+    passwd="Fl5yhVV7la",
+    database="sql7353111"
 )
 
 def toJson(registos):
