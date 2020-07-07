@@ -6,7 +6,7 @@ mydb = mysql.connector.connect(
     host="localhost",
     user="root",
     passwd="",
-    database="primeiro"
+    database="lojas"
 )
 
 # Parte que transforma o retorno do banco de dados em json
@@ -27,25 +27,41 @@ except:
 
 app= Flask(__name__)
 
-@app.route("/")
-def home():
+def adicionar_loja_final(nome_d):
+    mycursor.execute("CREATE TABLE %s(id INTEGER PRIMARY KEY, nome VARCHAR(30), preco INTEGER(10), quantidade INTEGER(10))" % (nome_d))
+
+@app.route("/", methods=["POST"])
+def listar_lojas():
+    body = request.get_json()
     mycursor.execute("SELECT * FROM produtos")
     result = mycursor.fetchall()
     return toJson(result)
 
-
-@app.route("/cadastrar", methods=["POST"])
-def cadastrarUsuario():
+@app.route("/adicionar/loja", methods=["POST"])
+def adicionar_loja():
     body = request.get_json()
-    nome = body["nome"]
-    preco = body["preco"]
-    quantidade = body["quantidade"]
+    nome_loja = body["nome_loja"]
+    senha_loja = body["senha_loja"]
+    gerente_loja = body["gerente_loja"]
+    id_gerente = body["id_gerente"]
+
     try:
-        mycursor.execute("INSERT INTO produtos(nome, preco, quantidade) VALUES ('%s', %d, %d)" % (nome, preco, quantidade))
+        mycursor.execute("INSERT INTO lojas_cadastradas(nome_loja, gerente_loja, senha_loja, id_gerente) VALUES ('%s', '%s', '%s', '%d')" % (nome_loja, gerente_loja, senha_loja, id_gerente))
         mydb.commit()
-        return {"message":"Cadastro efectuado com sucesso"}
+
+        mydb.cursor()
+        mycursor.execute("SELECT id_loja FROM lojas_cadastradas")
+        Identity = mycursor.fetchall()
+        f = 0
+        for i in Identity:
+            f = i
+
+        mydb.cursor()
+        sql = "CREATE TABLE %s(id int, nome VARCHAR(30), preco int(10), quantidade int(10), PRIMARY KEY(id));" % ("loja"+str(f[0]))
+        mycursor.execute(sql)
+        return {"status":"sucess", "loja_id":f[0]}
     except:
-        return {"message":"Falha ao registar no banco de dados"}
+        return {"message":"Falha ao inserir a Loja"}
 
 
 @app.route("/atualizar", methods=["POST"])
