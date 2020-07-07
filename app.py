@@ -42,14 +42,12 @@ def adicionar_loja():
     try:
         mycursor.execute("INSERT INTO lojas_cadastradas(nome_loja, gerente_loja, senha_loja, id_gerente) VALUES ('%s', '%s', '%s', '%d')" % (nome_loja, gerente_loja, senha_loja, id_gerente))
         mydb.commit()
-
         mydb.cursor()
         mycursor.execute("SELECT id_loja FROM lojas_cadastradas")
         Identity = mycursor.fetchall()
         f = 0
         for i in Identity:
             f = i
-
         mydb.cursor()
         sql = "CREATE TABLE %s(id int, nome VARCHAR(30), preco int(10), quantidade int(10), PRIMARY KEY(id));" % ("loja"+str(f[0]))
         mycursor.execute(sql)
@@ -57,6 +55,32 @@ def adicionar_loja():
     except:
         return {"message":"Falha ao inserir a Loja"}
 
+
+#  Criador de Produtos
+@app.route("/adicionar/produto", methods=["POST"])
+def adicionar_produto():
+    body = request.get_json()
+    id_loja = body["id_loja"]
+    senha_loja = body["senha_loja"]
+    nome_produto = body["nome_produto"]
+    quantidade = body["quantidade"]
+    preco = body["preco"]
+
+    try:
+        mydb.cursor()
+        mycursor.execute("SELECT id_loja, senha_loja FROM lojas_cadastradas")
+        db_data = mycursor.fetchall()
+        print(1)
+        for a, b in db_data:
+            if id_loja == a and senha_loja == b:
+                mydb.cursor()
+                sql = "INSERT INTO %s(nome, quantidade, preco) VALUES ('%s', %d, %d)" % ("loja"+str(a),nome_produto, quantidade, preco)
+                mycursor.execute(sql)
+                mydb.commit()
+                return {"message":"Produto inserido com sucesso"}
+        return {"message":"O produto nao foi encontrado"}
+    except:
+        return {"message":"Falha ao inserir o produto"}
 
 
 @app.route("/atualizar", methods=["POST"])
