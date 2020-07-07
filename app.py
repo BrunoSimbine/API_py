@@ -3,12 +3,13 @@ import mysql.connector
 import json
 
 mydb = mysql.connector.connect(
-    host="sql7.freesqldatabase.com",
-    user="sql7353111",
-    passwd="Fl5yhVV7la",
-    database="sql7353111"
+    host="localhost",
+    user="root",
+    passwd="",
+    database="primeiro"
 )
 
+# Parte que transforma o retorno do banco de dados em json
 def toJson(registos):
     lista = []
     for ID, nome, preco, quantidade in registos:
