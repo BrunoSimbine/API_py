@@ -70,7 +70,6 @@ def adicionar_produto():
         mydb.cursor()
         mycursor.execute("SELECT id_loja, senha_loja FROM lojas_cadastradas")
         db_data = mycursor.fetchall()
-        print(1)
         for a, b in db_data:
             if id_loja == a and senha_loja == b:
                 mydb.cursor()
@@ -82,6 +81,29 @@ def adicionar_produto():
     except:
         return {"message":"Falha ao inserir o produto"}
 
+#Eliminador de lojas
+@app.route("/eliminar/loja", methods=["POST"])
+def eliminar_loja():
+    body = request.get_json()
+    id_loja = body["id_loja"]
+    senha_loja = body["senha_loja"]
+    gerente_loja = body["gerente_loja"]
+    id_gerente = body["id_gerente"]
+    try:
+        mydb.cursor()
+        mycursor.execute("SELECT id_loja, senha_loja, gerente_loja, id_gerente FROM lojas_cadastradas")
+        db_data = mycursor.fetchall()
+        for a, b, c, d in db_data:
+            if a == id_loja and b == senha_loja and c == gerente_loja and d == id_gerente:
+                mydb.cursor()
+                mycursor.execute("DELETE FROM lojas_cadastradas WHERE id_loja=%d" % a)
+                mydb.commit()
+                mydb.cursor()
+                mycursor.execute("DROP TABLE %s" % ("loja"+str(a)))
+                return {"message":"Loja eliminada com sucesso"}
+        return {"message":"Loja nao encontrada"}
+    except:
+        return {"message":"Falha ao Eliminar a loja"}
 
 @app.route("/atualizar", methods=["POST"])
 def atualizarUsuario():
@@ -92,17 +114,6 @@ def atualizarUsuario():
         return {"message":"Usuario atualizado com sucesso"}
     except:
         return {"message":"Falha ao atualizar os dados"}
-
-@app.route("/apagar", methods=["POST"])
-def apagarUsuario():
-    body = request.get_json()
-    try:
-        mycursor.execute("DELETE FROM produtos WHERE id= %d" % body["id"])
-        mydb.commit()
-        return {"message":"Usuario removido com sucesso"}
-    except:
-        return {"message":"Falha ao eliminar o usuario"}
-
 
 @app.route("/filtrar", methods=["POST"])
 def filtrarUsuario():
